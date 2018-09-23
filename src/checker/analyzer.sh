@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    analyzer.sh                                        :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rnugroho <rnugroho@student.42.fr>          +#+  +:+       +#+         #
+#    By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/26 18:08:32 by aroulin           #+#    #+#              #
-#    Updated: 2018/07/27 21:33:35 by akupriia         ###   ########.fr        #
+#    Updated: 2018/09/23 21:59:14 by akupriia         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,9 +42,9 @@ IND=$TRY;
 WELL=0;
 TEST="";
 
-printf "[ NBR == $NBR && TRY == $TRY && MED == $MED ]\n"
+# printf "[ NBR == $NBR && TRY == $TRY && MED == $MED ]\n"
 
-echo "Analyse in progress ...\n\n";
+echo "Analyse in progress ...\n";
 while [ $IND -gt 0 ];
 do
 	ARG=`ruby -e "puts ($NBRBOT..$NBRTOP).to_a.shuffle.join(' ')"`
@@ -69,7 +69,7 @@ do
 		ACTMIN=$ARG; 
 		fi;
 	if [ $NBRCOUP -lt $MIN ]
-		then MIN=$NBRCOUP; 
+		then MIN=$NBRCOUP;
 		ACTMIN=$ARG; 
 		fi;
 	MOY=$(( $MOY + $NBRCOUP ));
@@ -82,11 +82,12 @@ do
 		fi;
 done;
 MOY=$(( $MOY / $TRY ));
+
 echo "\nThere is \x1b[33m$WELL/$TRY\x1b[0m correct answer"
 echo "There is \x1B[31m$MORE\x1b[0m more than $MED"
 echo "There is \x1B[32m$LESS\x1b[0m less than $MED"
-echo "The biggest  is :\x1B[31m$MAX\x1b[0m"
-echo "The average is :\t\x1b[33m$MOY\x1b[0m"
-echo "The smallest is :\x1B[32m$MIN\x1b[0m"
-echo "The worst list :\t$ACTMAX"
-echo "The best list :\t\t$ACTMIN"
+echo "The biggest is :  \x1B[31m$MAX\x1b[0m"
+echo "The average is :       \x1b[33m$MOY\x1b[0m"
+echo "The smallest is : \x1B[32m$MIN\x1b[0m"
+echo "\x1B[31mThe worst list :\x1b[0m $ACTMAX"
+echo "\x1B[32mThe best list :\x1b[0m $ACTMIN"

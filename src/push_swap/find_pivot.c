@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   find_pivot.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:05:07 by akupriia          #+#    #+#             */
-/*   Updated: 2018/07/27 23:05:08 by akupriia         ###   ########.fr       */
+/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../push_swap.h"
+#include <push_swap.h>
 
 int		*shift_fw(int *arr, int *n)
 {

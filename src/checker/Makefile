@@ -5,65 +5,53 @@
 #                                                     +:+ +:+         +:+      #
 #    By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2017/12/28 19:24:02 by vbrazas           #+#    #+#              #
-#    Updated: 2018/09/23 21:49:31 by akupriia         ###   ########.fr        #
+#    Created: 2018/09/23 21:00:30 by akupriia          #+#    #+#              #
+#    Updated: 2018/09/23 21:34:23 by akupriia         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re mclean mfclean mre
 
-NAME	:=	libftprintf.a
-LIB		:=	libft/
-LIB_N	:=	libft.a
-SRC_D	:=	src/
-SRC		:=	ft_printf.c \
-			char_nil_sth.c \
-			dig_min.c \
-			dig_plus.c \
-			dig_plusnil.c \
-			dig_pluswidth.c \
-			file1.c \
-			handle_char.c \
-			handle_dig.c \
-			handle_dig1.c \
-			handle_pointer.c \
-			handle_string.c \
-			parse_flags.c \
-			parse_spec.c \
-			parse_specif.c \
-			print_char.c \
-			print_uni.c \
-			print_unsigned.c \
-			stfunc.c \
-			str_min.c \
-			str_nil.c \
-			str_nil_sth.c \
-			struni1.c \
-			uns_nil.c
+NAME	:=	checker
+LIB		:=	../../ft_printf/
+LIB_N	:=	$(LIB)libftprintf.a
 
-SRCS	:=	$(addprefix $(SRC_D), $(SRC))
+INC_D	:=	../../includes/
+SRC_D	:=	./
 OBJ_D	:=	.obj/
-OBJ		:=	$(addprefix $(OBJ_D), $(SRCS:%.c=%.o))
+
 CC		:=	clang
 CFLAGS	:=	-Wall -Wextra -Werror
+IFLAGS	:=	-I $(INC_D)
+LFLAGS	:=	-L $(LIB) -lftprintf
 
+SRC		:=	check_operations checker checker_init dop_op_checker op_checker oper_checker parse_data
+
+SRCS	:=	$(addprefix $(SRC_D), $(addsuffix .c, $(SRC)))
+OBJS	:=	$(addprefix $(OBJ_D), $(SRCS:%.c=%.o))
+HDRS	:=	$(wildcard $(INC_D)*.h)
 
 all: $(NAME)
 
-$(NAME): $(OBJ_D) $(OBJ)
+$(NAME): $(LIB_N) $(OBJ_D) $(OBJS)
+	$(CC) $(CFLAGS) $(IFLAGS) $(LFLAGS) $(OBJS) -o $(NAME)
+$(LIB_N):
 	make -C $(LIB)
-	mv $(LIB)$(LIB_N) $(NAME)
-	ar -r $(NAME) $(OBJ)
-	ranlib $(NAME)
 
 $(OBJ_D):
 	mkdir -p $(OBJ_D)$(SRC_D)
-$(OBJ_D)%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJ_D)%.o: %.c $(HDRS)
+	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
+
+mclean:
+	rm -rf $(OBJ_D)
+mfclean: mclean
+	rm -f $(NAME)
+mre: mfclean all
 
 clean:
 	make clean -C $(LIB)
-	rm -f $(OBJ)
+	rm -rf $(OBJ_D)
 fclean: clean
 	make fclean -C $(LIB)
 	rm -f $(NAME)

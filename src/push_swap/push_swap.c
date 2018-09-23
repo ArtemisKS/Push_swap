@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/13 17:54:44 by akupriia          #+#    #+#             */
-/*   Updated: 2018/07/23 20:56:11 by akupriia         ###   ########.fr       */
+/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../push_swap.h"
+#include <push_swap.h>
 
 int		num_cor(char *line, t_stack *stack)
 {
@@ -49,7 +49,7 @@ void	ft_error(int code)
 		ft_printf("{RED}No arguments, in ./push_swap, man!{RESET}\n");
 	else if (code == 3)
 		ft_printf("{RED}Wrong number in ./push_swap{RESET}\n");
-	system("leaks -q push_swap");
+	// system("leaks -q push_swap");
 	exit(1);
 }
 

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ps_sort.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/02 20:57:56 by akupriia          #+#    #+#             */
-/*   Updated: 2018/08/02 20:57:57 by akupriia         ###   ########.fr       */
+/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../push_swap.h"
+#include <push_swap.h>
 
 void	pa_sort(t_stack *stack)
 {

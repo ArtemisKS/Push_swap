@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   checker.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/23 19:52:27 by akupriia          #+#    #+#             */
-/*   Updated: 2018/07/23 21:24:08 by akupriia         ###   ########.fr       */
+/*   Updated: 2018/09/23 22:01:21 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../push_swap.h"
+#include <push_swap.h>
 
 int		int_value(char *line)
 {
@@ -97,7 +97,6 @@ void	ft_error(int code)
 		ft_printf("{RED}Wrong operation passed to ./checker{RESET}\n");
 	else if (code == 5)
 		ft_printf("{RED}Array is unsorted in ./checker{RESET}\n");
-	system("leaks -q checker");
 	exit(1);
 }
 

@@ -10,9 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libft.a
+.PHONY: all clean fclean re
 
-SRC = 	ft_putchar.c \
+SRC :=	ft_putchar.c \
 		ft_atoi.c \
 		ft_strstr.c \
 		ft_strcat.c \
@@ -85,18 +85,28 @@ SRC = 	ft_putchar.c \
 		ft_itoa_base_u.c \
 		ft_nbrlen_u.c
 
-OBJ = $(SRC:.c=.o)
+NAME :=		libft.a
+HFILES :=	libft.h
+
+CC :=		clang
+CFLAGS :=	-Wall -Wextra -Werror
+
+OBJ_D :=	.obj/
+OBJS :=		$(addprefix $(OBJ_D), $(SRC:%.c=%.o))
+
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	ar rc $(NAME) $(OBJ)
+$(NAME): $(OBJ_D) $(OBJS)
+	ar rc $(NAME) $(OBJS)
+	ranlib $(NAME)
+$(OBJ_D):
+	mkdir -p $(OBJ_D)
+$(OBJ_D)%.o: %.c $(HFILES)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	/bin/rm -f *.o
-	/bin/rm -f *.gch
-
+	rm -rf $(OBJ_D)
 fclean: clean
-	/bin/rm -f $(NAME)
-
+	rm -f $(NAME)
 re: fclean all

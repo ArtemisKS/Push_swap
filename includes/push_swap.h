@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/13 17:55:45 by akupriia          #+#    #+#             */
-/*   Updated: 2018/07/17 17:52:28 by akupriia         ###   ########.fr       */
+/*   Updated: 2018/09/23 21:04:30 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-# include "ft_printf/hdr/libftprintf.h"
+# include "../ft_printf/hdr/libftprintf.h"
 
 typedef struct	s_stack
 {
