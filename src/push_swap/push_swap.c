@@ -49,7 +49,6 @@ void	ft_error(int code)
 		ft_printf("{RED}No arguments, in ./push_swap, man!{RESET}\n");
 	else if (code == 3)
 		ft_printf("{RED}Wrong number in ./push_swap{RESET}\n");
-	// system("leaks -q push_swap");
 	exit(1);
 }
 
@@ -111,6 +110,5 @@ int		main(int ac, char **av)
 	else
 		parse_data(ac, av, stack);
 	ps_sort(stack);
-	// system("leaks -q push_swap");
 	return (0);
 }
