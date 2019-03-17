@@ -23,7 +23,7 @@ END_X_A = SCR_WIDTH / 2 - 50
 INIT_X_B = SCR_WIDTH / 2 + 50
 END_X_B = SCR_WIDTH - 50
 LINE_WIDTH = 3
-FREQUENCY = 1
+FREQUENCY = 2
 
 def error_and_quit(mes):
 	print('Error:', mes)
@@ -73,7 +73,7 @@ def draw_stacks(one_len, init_y, line_width, case):
 		for num in stack1:
 			cur_y = init_y + i * INIT_SPACING
 			linesA.append(draw_line(INIT_X_A, cur_y, INIT_X_A + one_len * num, cur_y))
-			linesA[-1].setOutline(gr.color_rgb(255, 0, 0))
+			linesA[-1].setOutline(gr.color_rgb(220, 20, 60))
 			linesA[-1].draw(win)
 			linesA[-1].setWidth(line_width)
 			i += 1
@@ -173,51 +173,66 @@ def swap_els(lines, ess):
 	lines[1].move(0, -1.0 * INIT_SPACING)
 	lines[0], lines[1] = lines[1], lines[0]
 
-def redraw_all(case, index, ess):
-	if case == 0 or case == 2:
-		if index < 2:
-			move_stack(linesA, linesB, ess)
-		elif index < 4 or index == 10:
-			swap_els(linesA, ess)
-		elif index < 6 or index == 8:
-			draw_rotate(linesA, ess)
-		elif index < 8 or index == 9:
-			draw_rev_rotate(linesA, ess)
-	if case == 1 or case == 2:
-		if index < 2:
-			move_stack(linesB, linesA, ess)
-		elif index < 4 or index == 10:
-			swap_els(linesB, ess)
-		elif index < 6 or index == 8:
-			draw_rotate(linesB, ess)
-		elif index < 8 or index == 9:
-			draw_rev_rotate(linesB, ess)
+draw_funcs_lst = [None, None, swap_els, swap_els, draw_rotate, draw_rotate, draw_rev_rotate, draw_rev_rotate, draw_rotate, draw_rev_rotate, swap_els]
 
-def do_animation(ess, tf, i):
-	# time.sleep(1)
-	op = ops.pop(0)
-	if op[-1] == 'a':
-		case = 0
-	elif op[-1] == 'b':
-		case = 1
+def case_both(index, ess):
+	if index < 2:
+		move_stack(linesA, linesB, ess)
+		move_stack(linesB, linesA, ess)
 	else:
-		case = 2
-	index = append_op(op)
-	# print(f'cur_op: {op}, case: {case}')
-	redraw_all(case, index, ess)
-	# print(f'linesA: {linesA};\n\n linesB: {linesB}')
-	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
-	time.sleep(tf)
+		draw_funcs_lst[index](linesA, ess)
+		draw_funcs_lst[index](linesB, ess)
+
+def case_left_stack(index, ess):
+	if index < 2:
+		move_stack(linesA, linesB, ess)
+	else:
+		draw_funcs_lst[index](linesA, ess)
+
+def case_right_stack(index, ess):
+	if index < 2:
+		move_stack(linesB, linesA, ess)
+	else:
+		draw_funcs_lst[index](linesB, ess)
+
+def redraw_all(case, index, ess):
+	if case == 2:
+		case_both(index, ess)
+		return
+	if case == 0:
+		case_left_stack(index, ess)
+		return
+	if case == 1:
+		case_right_stack(index, ess)
+
+def do_animation(ess, tf):
+	# time.sleep(1)
+	init_len = len(stack1)
+	while True:
+		if not ops:
+			return
+		op = ops.pop(0)
+		if op[-1] == 'a':
+			case = 0
+		elif op[-1] == 'b':
+			case = 1
+		else:
+			case = 2
+		index = append_op(op)
+		# print(f'cur_op: {op}, case: {case}')
+		redraw_all(case, index, ess)
+		# print(f'linesA: {linesA};\n\n linesB: {linesB}')
+		# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
+		if init_len < 30:
+			time.sleep(tf)
 
 def start_animation(ess):
-	i = 0
 	tf = 1/(ess['init_st_len'] * FREQUENCY)
 	# tf = 1/(ess['init_st_len'])
 	draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 2)
-	while ops:
-		do_animation(ess, tf, i)
+	win.getMouse()
+	do_animation(ess, tf)
 		# print_stacks(stack1, stack2)
-		i += 1
 	# redraw_all(2, 0, ess)
 	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 0)
 
@@ -233,16 +248,20 @@ def process_for_pos_num():
 		error_and_quit('no operations in standard input')
 	for line in sys.stdin:
 		ops.append(line[:-1])
-	print('ops: ', ops)
+	# print('ops: ', ops)
+	op_len = len(ops)
 	start_animation(ess_vars)
+	return op_len
 
 def main():
 	global stack1, stack2
+	op_len = 0
 	stack = parse_params()
 	# print_stacks(stack, stack2)
 	stack1 = list(map(cast_to_int, stack))
+	in_len = len(stack1)
 	line = draw_line(SCR_WIDTH / 2, Y_INDENT, SCR_WIDTH / 2, SCR_HEIGHT - Y_INDENT)
-	line.setOutline(gr.color_rgb(0, 255, 255))
+	line.setOutline(gr.color_rgb(64, 224, 208))
 	line.setWidth(7)
 	line.draw(win)
 	if any(num <= 0 for num in stack1):
@@ -250,8 +269,24 @@ def main():
 		# process_for_neg_num
 		# sorted_stack = sorted(stack1)...
 	else:
-		process_for_pos_num()
-
+		op_len = process_for_pos_num()
+	if stack1 == sorted(stack1):
+		line.undraw()
+		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 75), f'Array of {in_len} elems is sorted!')
+		text.setOutline(gr.color_rgb(0, 127, 255))
+		text.setTextColor(gr.color_rgb(0, 255, 0))
+		text.setSize(20)
+		text.draw(win)
+		line = gr.Line(gr.Point(win.getWidth()/2 - 155, win.getHeight()/2 - 60), gr.Point(win.getWidth()/2 + 90, win.getHeight()/2 - 60))
+		line.setOutline(gr.color_rgb(64, 224, 208))
+		line.setWidth(0.5)
+		line.draw(win)
+		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 48), f'Number of operations: {op_len}')
+		text.setOutline(gr.color_rgb(0, 127, 255))
+		text.setTextColor(gr.color_rgb(0, 255, 0))
+		# text.setStyle('italic')
+		text.setSize(20)
+		text.draw(win)
 	win.getMouse()
 	win.close()
 
