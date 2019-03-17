@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+import select
 
 stack1 = []
 stack2 = []
@@ -24,15 +25,20 @@ END_X_B = SCR_WIDTH - 50
 LINE_WIDTH = 3
 FREQUENCY = 1
 
+def error_and_quit(mes):
+	print('Error:', mes)
+	quit()
+
+if av_len <= 1:
+	error_and_quit('please, enter at least one parameter')
+
 win = gr.GraphWin('PS visualization', SCR_WIDTH, SCR_HEIGHT)
 win.setBackground(gr.color_rgb(0, 0, 0))
 
 def draw_line(x1, y1, x2, y2):
 	return gr.Line(gr.Point(x1, y1), gr.Point(x2, y2))
 
-def error_and_quit(mes):
-	print('Error:', mes)
-	quit()
+
 
 def store_numbers(argv, stack):
 	for num in argv:
@@ -201,7 +207,7 @@ def do_animation(ess, tf, i):
 	redraw_all(case, index, ess)
 	# print(f'linesA: {linesA};\n\n linesB: {linesB}')
 	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
-	# time.sleep(tf)
+	time.sleep(tf)
 
 def start_animation(ess):
 	i = 0
@@ -217,21 +223,23 @@ def start_animation(ess):
 
 def process_for_pos_num():
 	init_st_len = len(stack1)
-	print_stacks(stack1, stack2)
+	# print_stacks(stack1, stack2)
 	max_elem = max(stack1)
 	min_elem = min(stack1)
 	one_len = calc_one_len(max_elem, min_elem)
 	init_y, line_width = calc_init_y(init_st_len)
 	ess_vars = {'one_len' : one_len, 'init_y' : init_y, 'line_width' : line_width, 'init_st_len' : init_st_len, 'max_elem' : max_elem, 'min_elem' : min_elem}
+	if not select.select([sys.stdin,],[],[],0.0)[0]:
+		error_and_quit('no operations in standard input')
 	for line in sys.stdin:
 		ops.append(line[:-1])
-	# print('ops: ', ops)
+	print('ops: ', ops)
 	start_animation(ess_vars)
 
 def main():
 	global stack1, stack2
 	stack = parse_params()
-	print_stacks(stack, stack2)
+	# print_stacks(stack, stack2)
 	stack1 = list(map(cast_to_int, stack))
 	line = draw_line(SCR_WIDTH / 2, Y_INDENT, SCR_WIDTH / 2, SCR_HEIGHT - Y_INDENT)
 	line.setOutline(gr.color_rgb(0, 255, 255))
