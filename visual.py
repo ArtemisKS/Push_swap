@@ -13,7 +13,7 @@ linesB = []
 operations = ['pb', 'pa', 'sb', 'sa', 'ra', 'rb', 'rra', 'rrb', 'rr', 'rrr', 'ss']
 av_len = len(sys.argv)
 SCR_WIDTH = 1200
-SCR_HEIGHT = 1200
+SCR_HEIGHT = 1311
 Y_INDENT = 100
 MAX_ELEM_WIDTH = SCR_WIDTH / 2 - 100
 MAX_STACK_HEIGHT = SCR_HEIGHT - Y_INDENT * 2
@@ -22,8 +22,10 @@ INIT_X_A = 50
 END_X_A = SCR_WIDTH / 2 - 50
 INIT_X_B = SCR_WIDTH / 2 + 50
 END_X_B = SCR_WIDTH - 50
-LINE_WIDTH = 3
+LINE_WIDTH = 4
 FREQUENCY = 2
+MOD = 0 # if you want quick but not beautiful mode, value should be not 0 else 0
+shifts = [[0, 0], [0, 0], [0, 0]]
 
 def error_and_quit(mes):
 	print('Error:', mes)
@@ -37,8 +39,6 @@ win.setBackground(gr.color_rgb(0, 0, 0))
 
 def draw_line(x1, y1, x2, y2):
 	return gr.Line(gr.Point(x1, y1), gr.Point(x2, y2))
-
-
 
 def store_numbers(argv, stack):
 	for num in argv:
@@ -59,13 +59,42 @@ def calc_one_len(max_elem, min_elem):
 	one_len = MAX_ELEM_WIDTH / diff
 	return one_len
 
+def calc_spacing(stlen):
+	global INIT_SPACING, LINE_WIDTH
+	while stlen * INIT_SPACING > MAX_STACK_HEIGHT:
+		if INIT_SPACING == 1:
+			break
+		INIT_SPACING -= 1
+		LINE_WIDTH -= 1 if INIT_SPACING - LINE_WIDTH < 1 else 0
+	return INIT_SPACING, LINE_WIDTH
+
+def	calc_init_y_pos(stlen, init_y):
+	i = 0
+	while stlen * INIT_SPACING > MAX_STACK_HEIGHT + (Y_INDENT - init_y) * 2 + i:
+		if init_y < 10:
+			error_and_quit(f'{stlen} operations is too many. Please, enlarge the screen height, which is currently {SCR_HEIGHT} (it must be more than {stlen + 10})')
+		init_y -= i
+		i += 1
+	print(f'init_y: {init_y}, st_len * INIT_SPACING: {stlen * INIT_SPACING}, MAX_STACK_HEIGHT: {MAX_STACK_HEIGHT}, LINE_WIDTH: {LINE_WIDTH}, INIT_SPACING: {INIT_SPACING}')
+	return init_y
+
 def calc_init_y(st_len):
-	init_y = 0
+	global INIT_SPACING, LINE_WIDTH
+	if INIT_SPACING - LINE_WIDTH < 1:
+		INIT_SPACING = LINE_WIDTH + 1
+	init_y = SCR_HEIGHT / 2 - ((st_len / 2) * INIT_SPACING)
 	if st_len * INIT_SPACING > MAX_STACK_HEIGHT:
-		# calc_spacing()
-		return init_y, 0
+		INIT_SPACING, LINE_WIDTH = calc_spacing(st_len)
+		init_y = SCR_HEIGHT / 2 - ((st_len / 2) * INIT_SPACING)
+		if init_y < 0:
+			error_and_quit(f'{st_len} operations is too many. Please, enlarge the screen height, which is currently {SCR_HEIGHT} (it must be more than {st_len + 10})')
+		print(f'init_y: {init_y}, st_len * INIT_SPACING: {st_len * INIT_SPACING}, MAX_STACK_HEIGHT: {MAX_STACK_HEIGHT}, LINE_WIDTH: {LINE_WIDTH}, INIT_SPACING: {INIT_SPACING}')
+		if st_len * INIT_SPACING + Y_INDENT - init_y <= MAX_STACK_HEIGHT:
+			return init_y, LINE_WIDTH
+		else:
+			return calc_init_y_pos(st_len, init_y), LINE_WIDTH
 	else:
-		return SCR_HEIGHT / 2 - ((st_len / 2) * INIT_SPACING), LINE_WIDTH
+		return init_y, LINE_WIDTH
 
 def draw_stacks(one_len, init_y, line_width, case):
 	i = 0
@@ -88,7 +117,7 @@ def draw_stacks(one_len, init_y, line_width, case):
 			i += 1
 
 def cast_to_int(elem):
-	if not re.match("^[0-9]*$", elem):
+	if not re.match("^[-]?[0-9]*$", elem):
 		error_and_quit(f'{elem} is not an int')
 	return int(elem)
 
@@ -133,8 +162,6 @@ def ss():
 	sb()
 
 def append_op(op):
-	if op not in operations:
-		error_and_quit(f'wrong operation')
 	index = operations.index(op)
 	op_funcs = [pb, pa, sb, sa, ra, rb, rra, rrb, rr, rrr, ss]
 	op_funcs[index]()
@@ -142,34 +169,56 @@ def append_op(op):
 
 def move_stack(lines1, lines2, ess):
 	for line in lines1:
-		line.move(0, 1.0 * (INIT_SPACING))
+		line.move(0, (INIT_SPACING))
 	line = lines2.pop(0)
 	lines1.insert(0, line)
 	if lines2 == linesA:
-		line.move(1.0 * SCR_WIDTH / 2, 0)
+		line.move(SCR_WIDTH / 2, 0)
 	else:
 		line.move(-1.0 * (SCR_WIDTH / 2), 0)
-	for line in lines2:
-		line.move(0, -1.0 * (INIT_SPACING))
+	if not MOD:
+		for line in lines2:
+			line.move(0, -1.0 * (INIT_SPACING))
+	else:
+		if lines2 == linesA:
+			shifts[0][0] -= 1
+		else: 
+			shifts[0][1] -= 1
 
 def draw_rotate(lines, ess):
 	line1 = lines.pop(0)
 	len_l = len(lines)
-	for i in range(0, len_l):
-		lines[i].move(0, -1.0 * INIT_SPACING)
-	line1.move(0, 1.0 * (INIT_SPACING * (len_l)))
+	if not MOD:
+		for i in range(0, len_l):
+			lines[i].move(0, -1.0 * INIT_SPACING)
+	if not MOD:
+		line1.move(0, (INIT_SPACING * (len_l)))
+	else:
+		line1.move(0, (INIT_SPACING * (len_l + 1)))
+		if lines == linesA:
+			shifts[1][0] -= 1
+		else: 
+			shifts[1][1] -= 1
 	lines.append(line1)
 
 def draw_rev_rotate(lines, ess):
 	lineE = lines.pop()
 	len_l = len(lines)
-	for i in range(len_l - 1, -1, -1):
-		lines[i].move(0, 1.0 * INIT_SPACING)
-	lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))
+	if not MOD:
+		for i in range(len_l - 1, -1, -1):
+			lines[i].move(0, INIT_SPACING)
+	if not MOD:
+		lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))
+	else:
+		lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l + 1)))
+		if lines == linesA:
+			shifts[2][0] += 1
+		else: 
+			shifts[2][1] += 1		
 	lines.insert(0, lineE)
 
 def swap_els(lines, ess):
-	lines[0].move(0, 1.0 * INIT_SPACING)
+	lines[0].move(0, INIT_SPACING)
 	lines[1].move(0, -1.0 * INIT_SPACING)
 	lines[0], lines[1] = lines[1], lines[0]
 
@@ -226,15 +275,23 @@ def do_animation(ess, tf):
 		if init_len < 30:
 			time.sleep(tf)
 
-def start_animation(ess):
-	tf = 1/(ess['init_st_len'] * FREQUENCY)
-	# tf = 1/(ess['init_st_len'])
+def start_animation(ess, oplen):
+	# tf = 1/(ess['init_st_len'] * FREQUENCY)
+	tf = 1/(oplen / FREQUENCY)
 	draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 2)
 	win.getMouse()
 	do_animation(ess, tf)
 		# print_stacks(stack1, stack2)
 	# redraw_all(2, 0, ess)
 	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 0)
+
+def extra_validate(ops):
+	for op in ops:
+		if op not in operations:
+			error_and_quit(f'wrong operation: {op}')
+	set_stack = set(stack1)
+	if len(stack1) != len(set_stack):
+		error_and_quit(f'found duplicates in your initial array')
 
 def process_for_pos_num():
 	init_st_len = len(stack1)
@@ -250,8 +307,31 @@ def process_for_pos_num():
 		ops.append(line[:-1])
 	# print('ops: ', ops)
 	op_len = len(ops)
-	start_animation(ess_vars)
+	extra_validate(ops)
+	start_animation(ess_vars, op_len)
 	return op_len
+
+def increment(elem, val):
+	res = elem + val
+	return res
+
+def globalize(sorted_stack):
+	global stack1
+	val = sorted_stack[0]
+	if val < 0:
+		val = val * -1 + 1
+		arr = [increment(num, val) for num in stack1]
+		del stack1
+		stack1 = arr
+	else:
+		val = 1
+		arr = [increment(num, val) for num in stack1]
+		del stack1
+		stack1 = arr
+
+# def bn_equalize(st_stack):
+# 	min_val = st_stack[0], max_val = st_stack[-1]
+# 	pass
 
 def main():
 	global stack1, stack2
@@ -264,13 +344,14 @@ def main():
 	line.setOutline(gr.color_rgb(64, 224, 208))
 	line.setWidth(7)
 	line.draw(win)
+	st_stack = sorted(stack1)
+	# bn_equalize(st_stack)
 	if any(num <= 0 for num in stack1):
-		pass
-		# process_for_neg_num
-		# sorted_stack = sorted(stack1)...
+		globalize(st_stack)
+		op_len = process_for_pos_num()
 	else:
 		op_len = process_for_pos_num()
-	if stack1 == sorted(stack1):
+	if stack1 == st_stack:
 		line.undraw()
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 75), f'Array of {in_len} elems is sorted!')
 		text.setOutline(gr.color_rgb(0, 127, 255))
@@ -284,8 +365,13 @@ def main():
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 48), f'Number of operations: {op_len}')
 		text.setOutline(gr.color_rgb(0, 127, 255))
 		text.setTextColor(gr.color_rgb(0, 255, 0))
-		# text.setStyle('italic')
 		text.setSize(20)
+		text.draw(win)
+		text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to quit')
+		text.setOutline(gr.color_rgb(0, 127, 255))
+		text.setTextColor(gr.color_rgb(255, 255, 0))
+		text.setSize(15)
+		text.setStyle('italic')
 		text.draw(win)
 	win.getMouse()
 	win.close()
