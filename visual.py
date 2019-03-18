@@ -119,7 +119,12 @@ def draw_stacks(one_len, init_y, line_width, case):
 def cast_to_int(elem):
 	if not re.match("^[-]?[0-9]*$", elem):
 		error_and_quit(f'{elem} is not an int')
-	return int(elem)
+	val = int(elem)
+	if val > 2147483647:
+		error_and_quit(f'{val} is less than min_int')
+	elif val < -2147483648:
+		error_and_quit(f'{val} is less than max_int')		
+	return val
 
 def print_stacks(stack1, stack2):
 	print(f'Stack A:\n {stack1}')
@@ -291,9 +296,12 @@ def extra_validate(ops):
 			error_and_quit(f'wrong operation: {op}')
 	set_stack = set(stack1)
 	if len(stack1) != len(set_stack):
+		print(f'stack1: {stack1}, set_stack: {set_stack}')
 		error_and_quit(f'found duplicates in your initial array')
 
-def process_for_pos_num():
+def process_for_pos_num(st_stack, in_len):
+	print(f'stack1: {stack1}')
+	# bn_scale(st_stack, in_len)
 	init_st_len = len(stack1)
 	# print_stacks(stack1, stack2)
 	max_elem = max(stack1)
@@ -329,9 +337,54 @@ def globalize(sorted_stack):
 		del stack1
 		stack1 = arr
 
-# def bn_equalize(st_stack):
-# 	min_val = st_stack[0], max_val = st_stack[-1]
+# def convert(elem, val):
+# 	return float(elem/val)
+
+# def convert_to_i(fl_arr, mult):
 # 	pass
+
+# def filterLessAvVal(num, av_val):
+# 	if num < av_val:
+# 		return num
+# 	return None
+
+# def filterMoreAvVal(num, av_val):
+# 	if num > av_val:
+# 		return num
+# 	return None
+
+# def filterNoneVals(val):
+# 	return val != None
+
+# def convert(mtav_stack, last_ltav_el, av_val):
+# 	if av_val / last_ltav_el > 50:
+# 		av_val = last_ltav_el + 1
+# 	i = 1	
+# 	for num in mtav_stack:
+# 		num = av_val + i
+# 		i += 2
+
+# def bn_scale(st_stack, in_len):
+# 	global stack1
+# 	min_val = st_stack[0]
+# 	av_val = sum(st_stack)/in_len
+# 	# print(f'av_val: {av_val}')
+# 	fl_arr = []
+# 	# if av_val > min_val * in_len:
+# 	# 	fl_arr = [convert(num, av_val) for num in stack1]
+# 	# 	print(f'fl_arr: {fl_arr}')
+# 	# 	mval = min(fl_arr)
+# 	# 	print(f'mval: {mval}')
+# 	# 	mult = float(1.01)/mval
+# 	# 	print(f'mult: {mult}')
+# 	# 	del stack1
+# 	# 	stack1 = convert_to_i(fl_arr, mult)
+# 	add_stack = [filterLessAvVal(num, av_val) for num in stack1]
+# 	ltav_stack = filter(filterNoneVals, add_stack)
+# 	add_stack = [filterMoreAvVal(num, av_val) for num in stack1]
+# 	mtav_stack = filter(filterNoneVals, add_stack)
+# 	mtav_stack = convert(mtav_stack, ltav_stack[-1], av_val)
+# 	# print(f'stack1: {stack1}')	
 
 def main():
 	global stack1, stack2
@@ -345,12 +398,12 @@ def main():
 	line.setWidth(7)
 	line.draw(win)
 	st_stack = sorted(stack1)
-	# bn_equalize(st_stack)
 	if any(num <= 0 for num in stack1):
 		globalize(st_stack)
-		op_len = process_for_pos_num()
+		st_stack = sorted(stack1)
+		op_len = process_for_pos_num(st_stack, in_len)
 	else:
-		op_len = process_for_pos_num()
+		op_len = process_for_pos_num(st_stack, in_len)
 	if stack1 == st_stack:
 		line.undraw()
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 75), f'Array of {in_len} elems is sorted!')
