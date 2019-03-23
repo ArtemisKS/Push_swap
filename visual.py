@@ -11,6 +11,8 @@ ops = []
 linesA = []
 linesB = []
 operations = ['pb', 'pa', 'sb', 'sa', 'ra', 'rb', 'rra', 'rrb', 'rr', 'rrr', 'ss']
+oper_a = {'pa' : 'push a', 'sa' : 'swap a', 'ra' : 'rotate a', 'rra' : 'reverse rotate a', 'ra' : 'rotate a', 'rra' : 'reverse rotate a', 'sa' : 'swap a'}
+oper_b = {'pb' : 'push b', 'sb' : 'swap b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'sb' : 'swap b'}
 av_len = len(sys.argv)
 SCR_WIDTH = 1200
 SCR_HEIGHT = 1311
@@ -23,6 +25,7 @@ END_X_A = SCR_WIDTH / 2 - 50
 INIT_X_B = SCR_WIDTH / 2 + 50
 END_X_B = SCR_WIDTH - 50
 LINE_WIDTH = 4
+C_LINE_WIDTH = 7
 FREQUENCY = 2
 MOD = 0 # if you want quick but not beautiful mode, value should be not 0 else 0
 shifts = [[0, 0], [0, 0], [0, 0]]
@@ -172,54 +175,48 @@ def append_op(op):
 	op_funcs[index]()
 	return index
 
+def move_up(lines):
+	for line in lines:
+		line.move(0, -1.0 * (INIT_SPACING))
+
+def move_down(lines):
+	for line in lines:
+		line.move(0, INIT_SPACING)
+
 def move_stack(lines1, lines2, ess):
-	for line in lines1:
-		line.move(0, (INIT_SPACING))
+	move_down(lines1)
+	# for line in lines1:
+	# 	line.move(0, (INIT_SPACING))
+	# lines1 = [line.move(0, (INIT_SPACING)) for line in lines1]
+	# map(lambda line: line.move(0, (INIT_SPACING)), lines1)
 	line = lines2.pop(0)
 	lines1.insert(0, line)
 	if lines2 == linesA:
 		line.move(SCR_WIDTH / 2, 0)
 	else:
 		line.move(-1.0 * (SCR_WIDTH / 2), 0)
-	if not MOD:
-		for line in lines2:
-			line.move(0, -1.0 * (INIT_SPACING))
-	else:
-		if lines2 == linesA:
-			shifts[0][0] -= 1
-		else: 
-			shifts[0][1] -= 1
+	move_up(lines2)	
+	# map(lambda line: line.move(0, -1.0 * (INIT_SPACING)), lines2)
+	# lines2 = [line.move(0, -1.0 * (INIT_SPACING)) for line in lines2]		
+	# for line in lines2:
+	# 	line.move(0, -1.0 * (INIT_SPACING))
 
 def draw_rotate(lines, ess):
 	line1 = lines.pop(0)
 	len_l = len(lines)
-	if not MOD:
-		for i in range(0, len_l):
-			lines[i].move(0, -1.0 * INIT_SPACING)
-	if not MOD:
-		line1.move(0, (INIT_SPACING * (len_l)))
-	else:
-		line1.move(0, (INIT_SPACING * (len_l + 1)))
-		if lines == linesA:
-			shifts[1][0] -= 1
-		else: 
-			shifts[1][1] -= 1
+	move_up(lines)
+	# for i in range(0, len_l):
+	# 	lines[i].move(0, -1.0 * INIT_SPACING)
+	line1.move(0, (INIT_SPACING * (len_l)))
 	lines.append(line1)
 
 def draw_rev_rotate(lines, ess):
 	lineE = lines.pop()
 	len_l = len(lines)
-	if not MOD:
-		for i in range(len_l - 1, -1, -1):
-			lines[i].move(0, INIT_SPACING)
-	if not MOD:
-		lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))
-	else:
-		lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l + 1)))
-		if lines == linesA:
-			shifts[2][0] += 1
-		else: 
-			shifts[2][1] += 1		
+	# move_down(lines)
+	for i in range(len_l - 1, -1, -1):
+		lines[i].move(0, INIT_SPACING)
+	lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))	
 	lines.insert(0, lineE)
 
 def swap_els(lines, ess):
@@ -259,21 +256,63 @@ def redraw_all(case, index, ess):
 	if case == 1:
 		case_right_stack(index, ess)
 
+def det_label_pos(op_label, f_size, init_x, end_x):
+	label_len = int(len(op_label) * f_size / 8)
+	indent = 0
+	while int(init_x + indent) < int(end_x - label_len - indent):
+		indent += 1
+		if indent > SCR_WIDTH/2:
+			error_and_quit(f'you stupid fuck!\n init_x: {init_x}, end_x: {end_x}, indent: {indent}, label_len: {label_len}')
+	return init_x + indent
+
+def set_text_attr(text, f_size):
+	text.setTextColor(gr.color_rgb(0, 255, 0))
+	text.setSize(f_size)
+	text.draw(win)
+
+def draw_labels(case, op_label, lab_x, op_label1, f_size, text, text1):
+	# print('case, op_label, lab_x, op_label1, f_size:\n', case, op_label, lab_x, op_label1, f_size)
+	if text:
+		text.undraw()
+	if text1:
+		text1.undraw()
+	if case != 2:
+		text = gr.Text(gr.Point(lab_x, Y_INDENT/2 - 10), op_label)
+		set_text_attr(text, f_size)
+	else:
+		text = gr.Text(gr.Point(lab_x, Y_INDENT/2 - 10), op_label)
+		text1 = gr.Text(gr.Point(lab_x + SCR_WIDTH/2, Y_INDENT/2 - 10), op_label1)
+		set_text_attr(text, f_size)
+		set_text_attr(text1, f_size)
+	return text, text1
+
 def do_animation(ess, tf):
 	# time.sleep(1)
+	oper_a = {'pa' : 'push a', 'sa' : 'swap a', 'ra' : 'rotate a', 'rra' : 'reverse rotate a', 'rr' : 'rotate a', 'rrr' : 'reverse rotate a', 'ss' : 'swap a'}
+	oper_b = {'pb' : 'push b', 'sb' : 'swap b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'rr' : 'rotate b', 'rrr' : 'reverse rotate b', 'ss' : 'swap b'}
 	init_len = len(stack1)
-	while True:
-		if not ops:
-			return
+	f_size = 25
+	text = None
+	text1 = None
+	while ops:
 		op = ops.pop(0)
 		if op[-1] == 'a':
 			case = 0
+			op_label = oper_a.get(op, 'Unexisting operation')
+			lab_x = det_label_pos(op_label, f_size, 0, int(SCR_WIDTH/2 - C_LINE_WIDTH/2 - 1))
 		elif op[-1] == 'b':
 			case = 1
+			op_label = oper_b.get(op, 'Unexisting operation')
+			lab_x = det_label_pos(op_label, f_size, int(SCR_WIDTH/2 + C_LINE_WIDTH/2 + 1), SCR_WIDTH)
 		else:
 			case = 2
+			op_label = oper_a.get(op, 'Unexisting operation')
+			op_label1 = oper_b.get(op, 'Unexisting operation')
+			lab_x = det_label_pos(op_label, f_size, 0, int(SCR_WIDTH/2 - C_LINE_WIDTH/2 - 1))
 		index = append_op(op)
 		# print(f'cur_op: {op}, case: {case}')
+		if LINE_WIDTH > 0:
+			text, text1 = draw_labels(case, op_label, lab_x, op_label1 if case == 2 else None, f_size, text, text1)
 		redraw_all(case, index, ess)
 		# print(f'linesA: {linesA};\n\n linesB: {linesB}')
 		# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
@@ -314,6 +353,8 @@ def process_for_pos_num(st_stack, in_len):
 	for line in sys.stdin:
 		ops.append(line[:-1])
 	# print('ops: ', ops)
+	if not ops:
+		error_and_quit('no operations, some error occured')
 	op_len = len(ops)
 	extra_validate(ops)
 	start_animation(ess_vars, op_len)
@@ -384,7 +425,7 @@ def globalize(sorted_stack):
 # 	add_stack = [filterMoreAvVal(num, av_val) for num in stack1]
 # 	mtav_stack = filter(filterNoneVals, add_stack)
 # 	mtav_stack = convert(mtav_stack, ltav_stack[-1], av_val)
-# 	# print(f'stack1: {stack1}')	
+# 	# print(f'stack1: {stack1}')
 
 def main():
 	global stack1, stack2
@@ -395,7 +436,7 @@ def main():
 	in_len = len(stack1)
 	line = draw_line(SCR_WIDTH / 2, Y_INDENT, SCR_WIDTH / 2, SCR_HEIGHT - Y_INDENT)
 	line.setOutline(gr.color_rgb(64, 224, 208))
-	line.setWidth(7)
+	line.setWidth(C_LINE_WIDTH)
 	line.draw(win)
 	st_stack = sorted(stack1)
 	if any(num <= 0 for num in stack1):
@@ -407,7 +448,6 @@ def main():
 	if stack1 == st_stack:
 		line.undraw()
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 75), f'Array of {in_len} elems is sorted!')
-		text.setOutline(gr.color_rgb(0, 127, 255))
 		text.setTextColor(gr.color_rgb(0, 255, 0))
 		text.setSize(20)
 		text.draw(win)
@@ -416,12 +456,10 @@ def main():
 		line.setWidth(0.5)
 		line.draw(win)
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 48), f'Number of operations: {op_len}')
-		text.setOutline(gr.color_rgb(0, 127, 255))
 		text.setTextColor(gr.color_rgb(0, 255, 0))
 		text.setSize(20)
 		text.draw(win)
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to quit')
-		text.setOutline(gr.color_rgb(0, 127, 255))
 		text.setTextColor(gr.color_rgb(255, 255, 0))
 		text.setSize(15)
 		text.setStyle('italic')
