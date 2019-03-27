@@ -15,7 +15,7 @@ oper_a = {'pa' : 'push a', 'sa' : 'swap a', 'ra' : 'rotate a', 'rra' : 'reverse 
 oper_b = {'pb' : 'push b', 'sb' : 'swap b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'sb' : 'swap b'}
 av_len = len(sys.argv)
 SCR_WIDTH = 1200
-SCR_HEIGHT = 1311
+SCR_HEIGHT = 1200
 Y_INDENT = 100
 MAX_ELEM_WIDTH = SCR_WIDTH / 2 - 100
 MAX_STACK_HEIGHT = SCR_HEIGHT - Y_INDENT * 2
@@ -26,12 +26,13 @@ INIT_X_B = SCR_WIDTH / 2 + 50
 END_X_B = SCR_WIDTH - 50
 LINE_WIDTH = 4
 C_LINE_WIDTH = 7
-FREQUENCY = 2
-MOD = 0 # if you want quick but not beautiful mode, value should be not 0 else 0
-shifts = [[0, 0], [0, 0], [0, 0]]
+DELAY = 15
+ONE_LEN = 0
 D_RED = gr.color_rgb(220, 20, 60)
+D_BLUE = gr.color_rgb(60, 20, 220)
 YELLOW = gr.color_rgb(255, 255, 0)
-GREEN = gr.color_rgb(255, 0, 0)
+GREEN = gr.color_rgb(0, 255, 0)
+SLOW_MODE = True
 
 def error_and_quit(mes):
 	print('Error:', mes)
@@ -43,8 +44,12 @@ if av_len <= 1:
 win = gr.GraphWin('PS visualization', SCR_WIDTH, SCR_HEIGHT)
 win.setBackground(gr.color_rgb(0, 0, 0))
 
-def draw_line(x1, y1, x2, y2):
-	return gr.Line(gr.Point(x1, y1), gr.Point(x2, y2))
+def draw_line(x1, y1, x2, y2, color, width):
+	line = gr.Line(gr.Point(x1, y1), gr.Point(x2, y2))
+	line.setOutline(color)
+	line.setWidth(width)
+	line.draw(win)
+	return line
 
 def store_numbers(argv, stack):
 	for num in argv:
@@ -103,14 +108,13 @@ def calc_init_y(st_len):
 		return init_y, LINE_WIDTH
 
 def draw_stacks(one_len, init_y, line_width, case):
+	global ONE_LEN
 	i = 0
+	ONE_LEN = one_len
 	if case == 0 or case == 2:
 		for num in stack1:
 			cur_y = init_y + i * INIT_SPACING
-			linesA.append(draw_line(INIT_X_A, cur_y, INIT_X_A + one_len * num, cur_y))
-			linesA[-1].setOutline(D_RED)
-			linesA[-1].draw(win)
-			linesA[-1].setWidth(line_width)
+			linesA.append(draw_line(INIT_X_A, cur_y, INIT_X_A + one_len * num, cur_y, D_RED, line_width))
 			i += 1
 	# i = 0
 	# if case == 1 or case == 2:
@@ -189,8 +193,11 @@ def move_down(lines):
 
 def color_line(*args, color):
 	for line in args:
-		if line:
-			line.setOutline(color)
+		line.setOutline(color)
+
+def anim_sidemove(line, it_shift, it_num):
+	for _ in range(it_num):
+		line.move(it_shift, 0)
 
 def move_stack(lines1, lines2, ess):
 	move_down(lines1)
@@ -201,9 +208,11 @@ def move_stack(lines1, lines2, ess):
 	line = lines2.pop(0)
 	lines1.insert(0, line)
 	if lines2 == linesA:
-		line.move(SCR_WIDTH / 2, 0)
+		anim_sidemove(line, int(SCR_WIDTH / 24), 12)
+		# line.move(SCR_WIDTH / 2, 0)
 	else:
-		line.move(-1.0 * (SCR_WIDTH / 2), 0)
+		anim_sidemove(line, int(-(SCR_WIDTH / 24)), 12)
+		# line.move(-1.0 * (SCR_WIDTH / 2), 0)
 	color_line(line, color=YELLOW)
 	move_up(lines2)	
 	# map(lambda line: line.move(0, -1.0 * (INIT_SPACING)), lines2)
@@ -218,9 +227,9 @@ def draw_rotate(lines, ess):
 	# for i in range(0, len_l):
 	# 	lines[i].move(0, -1.0 * INIT_SPACING)
 	line1.move(0, (INIT_SPACING * (len_l)))
-	color_line(line1, color=GREEN)
 	color_line(lines[0], color=YELLOW)
 	lines.append(line1)
+	color_line(lines[-1], color=GREEN)
 
 def draw_rev_rotate(lines, ess):
 	lineE = lines.pop()
@@ -229,9 +238,10 @@ def draw_rev_rotate(lines, ess):
 	for i in range(len_l - 1, -1, -1):
 		lines[i].move(0, INIT_SPACING)
 	lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))
-	color_line(lineE, color=GREEN)
-	color_line(lines[0], color=YELLOW)
+	# color_line(lineE, color=GREEN)
+	color_line(lines[-1], color=YELLOW)
 	lines.insert(0, lineE)
+	color_line(lines[0], color=GREEN)
 
 def swap_els(lines, ess):
 	color_line(lines[0], color=GREEN)
@@ -282,7 +292,7 @@ def det_label_pos(op_label, f_size, init_x, end_x):
 	return init_x + indent
 
 def set_text_attr(text, f_size):
-	text.setTextColor(gr.color_rgb(0, 255, 0))
+	text.setTextColor(GREEN)
 	text.setSize(f_size)
 	text.draw(win)
 
@@ -303,10 +313,7 @@ def draw_labels(case, op_label, lab_x, op_label1, f_size, text, text1):
 	return text, text1
 
 def do_animation(ess, tf):
-	# time.sleep(1)
-	oper_a = {'pa' : 'push a', 'sa' : 'swap a', 'ra' : 'rotate a', 'rra' : 'reverse rotate a', 'rr' : 'rotate a', 'rrr' : 'reverse rotate a', 'ss' : 'swap a'}
-	oper_b = {'pb' : 'push b', 'sb' : 'swap b', 'rb' : 'rotate b', 'rrb' : 'reverse rotate b', 'rr' : 'rotate b', 'rrr' : 'reverse rotate b', 'ss' : 'swap b'}
-	init_len = len(stack1)
+	global SLOW_MODE
 	f_size = 25
 	text = None
 	text1 = None
@@ -331,35 +338,69 @@ def do_animation(ess, tf):
 			text, text1 = draw_labels(case, op_label, lab_x, op_label1 if case == 2 else None, f_size, text, text1)
 		redraw_all(case, index, ess)
 		# print(f'linesA: {linesA};\n\n linesB: {linesB}')
-		# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
-		if init_len < 30:
+		# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)
+		if not win.checkMouse() and SLOW_MODE:
 			time.sleep(tf)
-		# if op == 'pa':
-		# 	color_line(linesA[0], D_RED)
-		# elif op == 'pb':
-		# 	color_line(linesB[0], D_RED)
-		# elif op == 'sa':
-		# 	color_line(linesA[0], linesA[1], D_RED)
-		# elif op == 'sb':
-		# 	color_line(linesB[0], linesB[1], D_RED)
-		# elif op == 'rra' or op == 'ra':
-		# 	color_line(linesA[0], linesA[-1], D_RED)
-		# elif op == 'rb' or op == 'rrb':
-		# 	color_line(linesB[0], linesB[-1], D_RED)
-		# elif op == 'rrr' or op == 'rr':
-		# 	color_line(linesA[0], linesA[-1], linesB[0], linesB[-1], D_RED)
-		# elif op == 'ss':
-		# 	color_line(linesA[0], linesA[1], linesB[0], linesB[1], D_RED)
-		len1 = len(stack1)
-		len2 = len(stack2)
-		color_line(linesA[0] if len1 else None, linesA[1] if len1 > 1 else None, linesB[0] if len2 else None, linesB[1] if len2 > 1 else None, linesA[-1] if len1 else None, linesB[-1] if len1 else None, color=D_RED)
+		key = win.checkKey()
+		# print(f'win.checkKey(): {key}')
+		if key == 'q':
+			SLOW_MODE = False
+		elif key == 's':
+			SLOW_MODE = True
+		elif key == 'p':
+			while(win.checkKey() != 'p'):
+				pass
+		if op == 'pa':
+			color_line(linesA[0], color=D_RED)
+		elif op == 'pb':
+			color_line(linesB[0], color=D_BLUE)
+		elif op == 'sa':
+			color_line(linesA[0], linesA[1], color=D_RED)
+		elif op == 'sb':
+			color_line(linesB[0], linesB[1], color=D_BLUE)
+		elif op == 'rra' or op == 'ra':
+			color_line(linesA[0], linesA[-1], color=D_RED)
+		elif op == 'rb' or op == 'rrb':
+			color_line(linesB[0], linesB[-1], color=D_BLUE)
+		elif op == 'rrr' or op == 'rr':
+			color_line(linesA[0], linesA[-1], color=D_RED)
+			color_line(linesB[0], linesB[-1], color=D_BLUE)
+		elif op == 'ss':
+			color_line(linesA[0], linesA[1], color=D_RED)
+			color_line(linesB[0], linesB[1], color=D_BLUE)
+	return text, text1
 
-def start_animation(ess, oplen):
-	# tf = 1/(ess['init_st_len'] * FREQUENCY)
-	tf = 1/(oplen / FREQUENCY)
+def move_elem_pyramid(line, max_el_width):
+	line_width = line.p2.x - line.p1.x
+	indent = 0
+	while indent + line_width < max_el_width - indent:
+		indent += 1
+	print(f'line: {line}; indent: {indent}')
+	line.move(indent + (SCR_WIDTH/2 - max_el_width/2 - ONE_LEN), 0)
+
+def make_pyramid(max_el_width):
+	[move_elem_pyramid(line, max_el_width) for line in linesA]
+
+def animate(ess, oplen):
+	# tf = 1/(ess['init_st_len'] * DELAY)
+	tf = 1/(oplen / DELAY)
 	draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 2)
+	text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to start')
+	text.setTextColor(YELLOW)
+	text.setSize(15)
+	text.setStyle('italic')
+	text.draw(win)
 	win.getMouse()
-	do_animation(ess, tf)
+	text.undraw()
+	line = draw_line(SCR_WIDTH / 2, Y_INDENT, SCR_WIDTH / 2, SCR_HEIGHT - Y_INDENT, gr.color_rgb(64, 224, 208), C_LINE_WIDTH)
+	text, text1 = do_animation(ess, tf)
+	if text:
+		text.undraw()
+	if text1:
+		text1.undraw()
+	line.undraw()
+	max_elem_width = ONE_LEN * stack1[-1]
+	make_pyramid(max_elem_width)
 		# print_stacks(stack1, stack2)
 	# redraw_all(2, 0, ess)
 	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 0)
@@ -392,7 +433,7 @@ def process_for_pos_num(st_stack, in_len):
 		error_and_quit('no operations, some error occured')
 	op_len = len(ops)
 	extra_validate(ops)
-	start_animation(ess_vars, op_len)
+	animate(ess_vars, op_len)
 	return op_len
 
 def increment(elem, val):
@@ -462,6 +503,13 @@ def globalize(sorted_stack):
 # 	mtav_stack = convert(mtav_stack, ltav_stack[-1], av_val)
 # 	# print(f'stack1: {stack1}')
 
+def make_label(x, y, text, color, size, style='italic'):
+	label = gr.Text(gr.Point(x, y), text)
+	label.setTextColor(color)
+	label.setSize(size)
+	label.setStyle(style)
+	return label
+
 def main():
 	global stack1, stack2
 	op_len = 0
@@ -469,10 +517,6 @@ def main():
 	# print_stacks(stack, stack2)
 	stack1 = list(map(cast_to_int, stack))
 	in_len = len(stack1)
-	line = draw_line(SCR_WIDTH / 2, Y_INDENT, SCR_WIDTH / 2, SCR_HEIGHT - Y_INDENT)
-	line.setOutline(gr.color_rgb(64, 224, 208))
-	line.setWidth(C_LINE_WIDTH)
-	line.draw(win)
 	st_stack = sorted(stack1)
 	if any(num <= 0 for num in stack1):
 		globalize(st_stack)
@@ -481,23 +525,12 @@ def main():
 	else:
 		op_len = process_for_pos_num(st_stack, in_len)
 	if stack1 == st_stack:
-		line.undraw()
-		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 75), f'Array of {in_len} elems is sorted!')
-		text.setTextColor(gr.color_rgb(0, 255, 0))
-		text.setSize(20)
+		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 175, f'Array of {in_len} elems is sorted!', GREEN, 20)
 		text.draw(win)
-		line = gr.Line(gr.Point(win.getWidth()/2 - 155, win.getHeight()/2 - 60), gr.Point(win.getWidth()/2 + 90, win.getHeight()/2 - 60))
-		line.setOutline(gr.color_rgb(64, 224, 208))
-		line.setWidth(0.5)
-		line.draw(win)
-		text = gr.Text(gr.Point(win.getWidth()/2 - 30, win.getHeight()/2 - 48), f'Number of operations: {op_len}')
-		text.setTextColor(gr.color_rgb(0, 255, 0))
-		text.setSize(20)
+		draw_line(win.getWidth()/2 - 155, win.getHeight()/2 - 160, win.getWidth()/2 + 90, win.getHeight()/2 - 160, gr.color_rgb(64, 224, 208), 0.4)
+		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 148, f'Number of operations: {op_len}', GREEN, 20)
 		text.draw(win)
-		text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to quit')
-		text.setTextColor(YELLOW)
-		text.setSize(15)
-		text.setStyle('italic')
+		text = make_label(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT, 'Click on the screen to quit', YELLOW, 15)
 		text.draw(win)
 	win.getMouse()
 	win.close()
