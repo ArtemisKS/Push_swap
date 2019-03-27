@@ -29,6 +29,9 @@ C_LINE_WIDTH = 7
 FREQUENCY = 2
 MOD = 0 # if you want quick but not beautiful mode, value should be not 0 else 0
 shifts = [[0, 0], [0, 0], [0, 0]]
+D_RED = gr.color_rgb(220, 20, 60)
+YELLOW = gr.color_rgb(255, 255, 0)
+GREEN = gr.color_rgb(255, 0, 0)
 
 def error_and_quit(mes):
 	print('Error:', mes)
@@ -105,19 +108,19 @@ def draw_stacks(one_len, init_y, line_width, case):
 		for num in stack1:
 			cur_y = init_y + i * INIT_SPACING
 			linesA.append(draw_line(INIT_X_A, cur_y, INIT_X_A + one_len * num, cur_y))
-			linesA[-1].setOutline(gr.color_rgb(220, 20, 60))
+			linesA[-1].setOutline(D_RED)
 			linesA[-1].draw(win)
 			linesA[-1].setWidth(line_width)
 			i += 1
-	i = 0
-	if case == 1 or case == 2:
-		for num in stack2:
-			cur_y = init_y + i * INIT_SPACING
-			linesB.append(draw_line(INIT_X_B, cur_y, INIT_X_B + one_len * num, cur_y))
-			linesB[-1].setOutline(gr.color_rgb(255, 0, 0))
-			linesB[-1].draw(win)
-			linesB[-1].setWidth(line_width)
-			i += 1
+	# i = 0
+	# if case == 1 or case == 2:
+	# 	for num in stack2:
+	# 		cur_y = init_y + i * INIT_SPACING
+	# 		linesB.append(draw_line(INIT_X_B, cur_y, INIT_X_B + one_len * num, cur_y))
+	# 		linesB[-1].setOutline(gr.color_rgb(255, 0, 0))
+	# 		linesB[-1].draw(win)
+	# 		linesB[-1].setWidth(line_width)
+	# 		i += 1
 
 def cast_to_int(elem):
 	if not re.match("^[-]?[0-9]*$", elem):
@@ -183,6 +186,12 @@ def move_down(lines):
 	for line in lines:
 		line.move(0, INIT_SPACING)
 
+
+def color_line(*args, color):
+	for line in args:
+		if line:
+			line.setOutline(color)
+
 def move_stack(lines1, lines2, ess):
 	move_down(lines1)
 	# for line in lines1:
@@ -195,6 +204,7 @@ def move_stack(lines1, lines2, ess):
 		line.move(SCR_WIDTH / 2, 0)
 	else:
 		line.move(-1.0 * (SCR_WIDTH / 2), 0)
+	color_line(line, color=YELLOW)
 	move_up(lines2)	
 	# map(lambda line: line.move(0, -1.0 * (INIT_SPACING)), lines2)
 	# lines2 = [line.move(0, -1.0 * (INIT_SPACING)) for line in lines2]		
@@ -208,6 +218,8 @@ def draw_rotate(lines, ess):
 	# for i in range(0, len_l):
 	# 	lines[i].move(0, -1.0 * INIT_SPACING)
 	line1.move(0, (INIT_SPACING * (len_l)))
+	color_line(line1, color=GREEN)
+	color_line(lines[0], color=YELLOW)
 	lines.append(line1)
 
 def draw_rev_rotate(lines, ess):
@@ -216,10 +228,14 @@ def draw_rev_rotate(lines, ess):
 	# move_down(lines)
 	for i in range(len_l - 1, -1, -1):
 		lines[i].move(0, INIT_SPACING)
-	lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))	
+	lineE.move(0, -1.0 * ((INIT_SPACING) * (len_l)))
+	color_line(lineE, color=GREEN)
+	color_line(lines[0], color=YELLOW)
 	lines.insert(0, lineE)
 
 def swap_els(lines, ess):
+	color_line(lines[0], color=GREEN)
+	color_line(lines[1], color=YELLOW)
 	lines[0].move(0, INIT_SPACING)
 	lines[1].move(0, -1.0 * INIT_SPACING)
 	lines[0], lines[1] = lines[1], lines[0]
@@ -318,6 +334,25 @@ def do_animation(ess, tf):
 		# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], case, index)	
 		if init_len < 30:
 			time.sleep(tf)
+		# if op == 'pa':
+		# 	color_line(linesA[0], D_RED)
+		# elif op == 'pb':
+		# 	color_line(linesB[0], D_RED)
+		# elif op == 'sa':
+		# 	color_line(linesA[0], linesA[1], D_RED)
+		# elif op == 'sb':
+		# 	color_line(linesB[0], linesB[1], D_RED)
+		# elif op == 'rra' or op == 'ra':
+		# 	color_line(linesA[0], linesA[-1], D_RED)
+		# elif op == 'rb' or op == 'rrb':
+		# 	color_line(linesB[0], linesB[-1], D_RED)
+		# elif op == 'rrr' or op == 'rr':
+		# 	color_line(linesA[0], linesA[-1], linesB[0], linesB[-1], D_RED)
+		# elif op == 'ss':
+		# 	color_line(linesA[0], linesA[1], linesB[0], linesB[1], D_RED)
+		len1 = len(stack1)
+		len2 = len(stack2)
+		color_line(linesA[0] if len1 else None, linesA[1] if len1 > 1 else None, linesB[0] if len2 else None, linesB[1] if len2 > 1 else None, linesA[-1] if len1 else None, linesB[-1] if len1 else None, color=D_RED)
 
 def start_animation(ess, oplen):
 	# tf = 1/(ess['init_st_len'] * FREQUENCY)
@@ -460,7 +495,7 @@ def main():
 		text.setSize(20)
 		text.draw(win)
 		text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to quit')
-		text.setTextColor(gr.color_rgb(255, 255, 0))
+		text.setTextColor(YELLOW)
 		text.setSize(15)
 		text.setStyle('italic')
 		text.draw(win)
