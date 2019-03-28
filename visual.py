@@ -33,6 +33,8 @@ D_BLUE = gr.color_rgb(60, 20, 220)
 YELLOW = gr.color_rgb(255, 255, 0)
 GREEN = gr.color_rgb(0, 255, 0)
 SLOW_MODE = True
+MAX_ELEM = 0
+max_elem_width = 0
 
 def error_and_quit(mes):
 	print('Error:', mes)
@@ -107,14 +109,24 @@ def calc_init_y(st_len):
 	else:
 		return init_y, LINE_WIDTH
 
+def calc_el_x(elem):
+	line_width = ONE_LEN * elem
+	indent = 0
+	while indent + line_width < max_elem_width - indent:
+		indent += 1
+	print(f'one_len: {ONE_LEN}; elem: {elem}; indent: {indent}')
+	return indent
+
 def draw_stacks(one_len, init_y, line_width, case):
-	global ONE_LEN
+	global ONE_LEN, max_elem_width
 	i = 0
 	ONE_LEN = one_len
+	max_elem_width = MAX_ELEM * ONE_LEN
 	if case == 0 or case == 2:
 		for num in stack1:
+			el_x = calc_el_x(num) + INIT_X_A
 			cur_y = init_y + i * INIT_SPACING
-			linesA.append(draw_line(INIT_X_A, cur_y, INIT_X_A + one_len * num, cur_y, D_RED, line_width))
+			linesA.append(draw_line(el_x, cur_y, el_x + one_len * num, cur_y, D_RED, line_width))
 			i += 1
 	# i = 0
 	# if case == 1 or case == 2:
@@ -371,12 +383,13 @@ def do_animation(ess, tf):
 	return text, text1
 
 def move_elem_pyramid(line, max_el_width):
-	line_width = line.p2.x - line.p1.x
-	indent = 0
-	while indent + line_width < max_el_width - indent:
-		indent += 1
-	print(f'line: {line}; indent: {indent}')
-	line.move(indent + (SCR_WIDTH/2 - max_el_width/2 - ONE_LEN), 0)
+	# line_width = line.p2.x - line.p1.x
+	# indent = 0
+	# while indent + line_width < max_el_width - indent:
+	# 	indent += 1
+	# print(f'line: {line}; indent: {indent}')
+	# line.move(indent + (SCR_WIDTH/2 - max_el_width/2 - ONE_LEN), 0)
+	line.move(SCR_WIDTH/2 - max_el_width/2 - ONE_LEN * 2, 0)
 
 def make_pyramid(max_el_width):
 	[move_elem_pyramid(line, max_el_width) for line in linesA]
@@ -511,13 +524,14 @@ def make_label(x, y, text, color, size, style='italic'):
 	return label
 
 def main():
-	global stack1, stack2
+	global stack1, stack2, MAX_ELEM
 	op_len = 0
 	stack = parse_params()
 	# print_stacks(stack, stack2)
 	stack1 = list(map(cast_to_int, stack))
 	in_len = len(stack1)
 	st_stack = sorted(stack1)
+	MAX_ELEM = st_stack[-1]
 	if any(num <= 0 for num in stack1):
 		globalize(st_stack)
 		st_stack = sorted(stack1)
@@ -525,10 +539,10 @@ def main():
 	else:
 		op_len = process_for_pos_num(st_stack, in_len)
 	if stack1 == st_stack:
-		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 175, f'Array of {in_len} elems is sorted!', GREEN, 20)
+		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 275, f'Array of {in_len} elems is sorted!', GREEN, 20)
 		text.draw(win)
-		draw_line(win.getWidth()/2 - 155, win.getHeight()/2 - 160, win.getWidth()/2 + 90, win.getHeight()/2 - 160, gr.color_rgb(64, 224, 208), 0.4)
-		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 148, f'Number of operations: {op_len}', GREEN, 20)
+		draw_line(win.getWidth()/2 - 155, win.getHeight()/2 - 260, win.getWidth()/2 + 90, win.getHeight()/2 - 260, gr.color_rgb(64, 224, 208), 0.4)
+		text = make_label(win.getWidth()/2 - 30, win.getHeight()/2 - 248, f'Number of operations: {op_len}', GREEN, 20)
 		text.draw(win)
 		text = make_label(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT, 'Click on the screen to quit', YELLOW, 15)
 		text.draw(win)
