@@ -7,6 +7,7 @@ import select
 
 stack1 = []
 stack2 = []
+in_len = 0
 ops = []
 linesA = []
 linesB = []
@@ -382,17 +383,28 @@ def do_animation(ess, tf):
 			color_line(linesB[0], linesB[1], color=D_BLUE)
 	return text, text1
 
-def move_elem_pyramid(line, max_el_width):
+def make_gradient(ele):
+	pass
+
+def move_elem_pyramid(line, max_el_width, col_value):
+	color = gr.color_rgb(col_value, col_value, col_value)
 	# line_width = line.p2.x - line.p1.x
 	# indent = 0
 	# while indent + line_width < max_el_width - indent:
 	# 	indent += 1
 	# print(f'line: {line}; indent: {indent}')
 	# line.move(indent + (SCR_WIDTH/2 - max_el_width/2 - ONE_LEN), 0)
+	line.setOutline(color)
 	line.move(SCR_WIDTH/2 - max_el_width/2 - ONE_LEN * 2, 0)
 
-def make_pyramid(max_el_width):
-	[move_elem_pyramid(line, max_el_width) for line in linesA]
+def make_gradient_pyramid(max_el_width):
+	i = 0
+	grad_step = int(240/len(linesA))
+	for line in linesA:
+		col_value = 255 - i * grad_step
+		move_elem_pyramid(line, max_el_width, col_value)
+		i += 1
+	# [move_elem_pyramid(line, max_el_width) for line in linesA]
 
 def animate(ess, oplen):
 	# tf = 1/(ess['init_st_len'] * DELAY)
@@ -413,7 +425,7 @@ def animate(ess, oplen):
 		text1.undraw()
 	line.undraw()
 	max_elem_width = ONE_LEN * stack1[-1]
-	make_pyramid(max_elem_width)
+	make_gradient_pyramid(max_elem_width)
 		# print_stacks(stack1, stack2)
 	# redraw_all(2, 0, ess)
 	# draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 0)
@@ -524,7 +536,7 @@ def make_label(x, y, text, color, size, style='italic'):
 	return label
 
 def main():
-	global stack1, stack2, MAX_ELEM
+	global stack1, stack2, MAX_ELEM, in_len
 	op_len = 0
 	stack = parse_params()
 	# print_stacks(stack, stack2)
