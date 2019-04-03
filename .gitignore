@@ -54,3 +54,4 @@ dkms.conf
 # My addings
 checker
 push_swap
+log*
