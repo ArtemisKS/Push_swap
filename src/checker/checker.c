@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/23 19:52:27 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 22:01:21 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/03 22:04:24 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,10 @@ int		is_sorted(t_stack *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack->num_1 - 1)
-	{
+	i = -1;
+	while (++i < stack->num_1 - 1)
 		if (stack->st1[i] > stack->st1[i + 1])
 			return (0);
-		i++;
-	}
 	stack->sort_elem = stack->num_1;
 	return (1);
 }
@@ -109,7 +106,11 @@ int		main(int ac, char **av)
 
 	s = NULL;
 	i = 0;
-	stack = init_stack1(ac);
+	stack = ft_memalloc(sizeof(t_stack));
+	stack->st1 = malloc(sizeof(int) * (ac - 1));
+	stack->st2 = malloc(sizeof(int) * (ac - 1));
+	if (ac > 2)
+		stack->num_elem = ft_memalloc(sizeof(int) * (ac - 1) / 2);
 	stack = main_ifs(ac, av, stack);
 	while (((gnl = get_next_line(0, &s)) > 0) && (++i))
 	{

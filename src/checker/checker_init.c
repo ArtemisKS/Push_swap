@@ -3,42 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   checker_init.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 22:58:54 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/02 20:39:34 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <push_swap.h>
-
-t_stack	*init_stack1(int ac)
-{
-	t_stack *stack;
-
-	if (ac == 1)
-		ft_error(2);
-	stack = (t_stack*)malloc(sizeof(t_stack));
-	stack->st1 = (int*)malloc(sizeof(int) * (ac - 1));
-	stack->st2 = (int*)malloc(sizeof(int) * (ac - 1));
-	if (ac > 2)
-	{
-		stack->num_elem = (int*)malloc(sizeof(int) * (ac - 1) / 2);
-		init_numelem(stack, (ac - 1) / 2);
-	}
-	stack->num_1 = 0;
-	stack->num_2 = 0;
-	stack->ind = 0;
-	stack->sum_elem = 0;
-	stack->sort_elem = 0;
-	stack->el_num = 0;
-	stack->debug = 0;
-	stack->visual = 0;
-	stack->man = 0;
-	stack->color = 0;
-	stack->fl = 0;
-	return (stack);
-}
 
 t_stack	*main_ifs(int ac, char **av, t_stack *stack)
 {
@@ -107,9 +79,8 @@ void	check(char *s, t_stack *stack)
 	{"sb", &sb1}, {"ra", &ra1}, {"rra", &rra1}, {"rb", &rb1}, {"rrb", &rrb1}, \
 	{"rr", &rr}, {"ss", &ss}, {"rrr", &rrr}};
 
-	i = 0;
-	while (i < 11)
-	{
+	i = -1;
+	while (++i < 11)
 		if (ft_strequ(s, arr[i].oper))
 		{
 			arr[i].func(stack);
@@ -117,8 +88,6 @@ void	check(char *s, t_stack *stack)
 			check_conds(stack, arr, i, cnt);
 			break ;
 		}
-		i++;
-	}
 	if (i == 11)
 		ft_error(4);
 }

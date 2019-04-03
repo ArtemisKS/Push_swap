@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_data.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 22:18:18 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/03 21:00:38 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,11 @@ t_stack	*check_if_str(char *s, t_stack *stack)
 	while (arr[++i])
 		;
 	free_stack(stack);
-	stack = init_stack1(i + 1);
+	stack = ft_memalloc(sizeof(t_stack));
+	stack->st1 = malloc(sizeof(int) * (i));
+	stack->st2 = malloc(sizeof(int) * (i));
+	if (i > 1)
+		stack->num_elem = ft_memalloc(sizeof(int) * (i) / 2);
 	i = -1;
 	while (arr[++i])
 	{
