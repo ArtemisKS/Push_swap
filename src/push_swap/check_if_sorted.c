@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_if_sorted.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:08:29 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/02 20:37:24 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,10 @@ int		is_sorted(t_stack *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack->num_1 - 1)
-	{
+	i = -1;
+	while (++i < stack->num_1 - 1)
 		if (stack->st1[i] > stack->st1[i + 1])
 			return (0);
-		i++;
-	}
 	stack->sort_elem = stack->num_1;
 	return (1);
 }
@@ -60,13 +57,10 @@ int		is_sorted1(t_stack *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack->num_1 - 1)
-	{
+	i = -1;
+	while (++i < stack->num_1 - 1)
 		if (stack->st1[i + 1] - stack->st1[i] != 1)
 			return (0);
-		i++;
-	}
 	stack->sort_elem = stack->num_1;
 	return (1);
 }
@@ -75,13 +69,10 @@ int		is_rev_sorted_b(t_stack *stack)
 {
 	int i;
 
-	i = 0;
-	while (i < stack->num_2 - 1)
-	{
+	i = -1;
+	while (++i < stack->num_2 - 1)
 		if (stack->st2[i] < stack->st2[i + 1])
 			return (0);
-		i++;
-	}
 	return (1);
 }
 
@@ -89,12 +80,9 @@ int		is_rev_sorted_b_num(t_stack *stack, int n)
 {
 	int i;
 
-	i = 0;
-	while (i < n - 1)
-	{
+	i = -1;
+	while (++i < n - 1)
 		if (stack->st2[i + 1] - stack->st2[i] != 1)
 			return (0);
-		i++;
-	}
 	return (1);
 }

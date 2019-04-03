@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: akupriia <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/23 22:24:32 by akupriia          #+#    #+#              #
-#    Updated: 2018/06/03 21:06:18 by akupriia         ###   ########.fr        #
+#    Updated: 2019/04/02 21:39:44 by vbrazas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -89,7 +89,7 @@ NAME :=		libft.a
 HFILES :=	libft.h
 
 CC :=		clang
-CFLAGS :=	-Wall -Wextra -Werror
+CFLAGS :=	-Wall -Wextra -Werror -g
 
 OBJ_D :=	.obj/
 OBJS :=		$(addprefix $(OBJ_D), $(SRC:%.c=%.o))

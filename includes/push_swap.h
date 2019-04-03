@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/13 17:55:45 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 21:04:30 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/02 20:37:28 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ typedef struct	s_oper
 	void		(*func)(t_stack *);
 }				t_oper;
 
+t_list			*op_list;
+
 int				num_cor(char *line, t_stack *stack);
 void			swap(int *a, int *b);
 int				int_value(char *line);
@@ -58,7 +60,6 @@ void			rra(t_stack *stack);
 void			rrb(t_stack *stack);
 void			pa(t_stack *stack);
 void			pb(t_stack *stack);
-t_stack			*init_stack(int ac);
 int				is_sorted(t_stack *stack);
 void			ft_error(int code);
 void			init_numelem(t_stack *stack, int n);
@@ -94,7 +95,6 @@ int				case3el(t_stack *stack);
 void			rev_sort_3_elem_b(t_stack *stack, int n);
 int				ps_partition_b(t_stack *stack, int n);
 int				do_partition_b(t_stack *stack, int pivot, int n);
-t_stack			*init_stack1(int ac);
 void			do_rb(t_stack *stack, int cnt);
 int				do_rb1(t_stack *stack, int cnt, int pivot);
 int				find_pivot_b_back(t_stack *stack, int n);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ps_oper1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:06:56 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/02 22:15:26 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,10 @@ int		is_rev_sorted_b1(t_stack *stack, int n)
 {
 	int i;
 
-	i = 0;
-	while (i < n - 1)
-	{
+	i = -1;
+	while (++i < n - 1)
 		if (stack->st2[i] - stack->st2[i + 1] != 1)
 			return (0);
-		i++;
-	}
 	return (1);
 }
 
@@ -41,7 +38,7 @@ void	sa(t_stack *stack)
 	if (stack->num_1 > 1)
 	{
 		swap(&stack->st1[0], &stack->st1[1]);
-		ft_printf("sa\n");
+		ft_lstpush(&op_list, ft_lstnew("sa\n", 3));
 	}
 }
 
@@ -50,6 +47,24 @@ void	sb(t_stack *stack)
 	if (stack->num_2 > 1)
 	{
 		swap(&stack->st2[0], &stack->st2[1]);
-		ft_printf("sb\n");
+		ft_lstpush(&op_list, ft_lstnew("sb\n", 3));
 	}
+}
+
+void	rrr(t_stack *stack)
+{
+	rra(stack);
+	rrb(stack);
+}
+
+void	ss(t_stack *stack)
+{
+	sa(stack);
+	sb(stack);
+}
+
+void	rr(t_stack *stack)
+{
+	ra(stack);
+	rb(stack);
 }

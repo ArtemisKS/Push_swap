@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_pivot.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:05:07 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/03 22:07:48 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ void	pa(t_stack *stack)
 		stack->st1 = shift_back(stack->st1, &stack->num_1);
 		stack->st1[0] = num;
 		free(arr);
-		ft_printf("pa\n");
+		ft_lstpush(&op_list, ft_lstnew("pa\n", 3));
+		// ft_printf("pa\n");
 	}
 }
 
@@ -57,7 +58,8 @@ void	pb(t_stack *stack)
 		stack->st2 = shift_back(stack->st2, &stack->num_2);
 		stack->st2[0] = num;
 		free(arr);
-		ft_printf("pb\n");
+		ft_lstpush(&op_list, ft_lstnew("pb\n", 3));
+		// ft_printf("pb\n");
 	}
 }
 
@@ -71,16 +73,14 @@ int		find_pivot(t_stack *stack, int n)
 	i = -1;
 	cnt = 0;
 	cnt1 = 0;
-	while (++i < n)
+	while (++i < n && (j = -1))
 	{
-		j = 0;
-		while (j < n)
+		while (++j < n)
 		{
 			if (stack->st1[i] > stack->st1[j])
 				cnt++;
 			else if (stack->st1[i] < stack->st1[j])
 				cnt1++;
-			j++;
 		}
 		if (((cnt == cnt1) && (n % 2)) || ((cnt == cnt1 - 1) && (!(n % 2))))
 			break ;
@@ -100,16 +100,14 @@ int		find_pivot_b(t_stack *stack, int n)
 	i = -1;
 	cnt = 0;
 	cnt1 = 0;
-	while (++i < n)
+	while (++i < n && (j = -1))
 	{
-		j = 0;
-		while (j < n)
+		while (++j < n)
 		{
 			if (stack->st2[i] > stack->st2[j])
 				cnt++;
 			else if (stack->st2[i] < stack->st2[j])
 				cnt1++;
-			j++;
 		}
 		if (((cnt == cnt1) && (n % 2)) || ((cnt == cnt1 - 1) && (!(n % 2))))
 			break ;

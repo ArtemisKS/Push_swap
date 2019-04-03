@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+         #
+#    By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/28 19:24:02 by vbrazas           #+#    #+#              #
-#    Updated: 2018/09/23 21:49:31 by akupriia         ###   ########.fr        #
+#    Updated: 2019/04/02 21:39:54 by vbrazas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ SRCS	:=	$(addprefix $(SRC_D), $(SRC))
 OBJ_D	:=	.obj/
 OBJ		:=	$(addprefix $(OBJ_D), $(SRCS:%.c=%.o))
 CC		:=	clang
-CFLAGS	:=	-Wall -Wextra -Werror
+CFLAGS	:=	-Wall -Wextra -Werror -g
 
 
 all: $(NAME)

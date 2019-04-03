@@ -115,20 +115,20 @@ def calc_el_x(elem):
 	indent = 0
 	while indent + line_width < max_elem_width - indent:
 		indent += 1
-	print(f'one_len: {ONE_LEN}; elem: {elem}; indent: {indent}')
+	# print(f'one_len: {ONE_LEN}; elem: {elem}; indent: {indent}')
 	return indent
 
-def draw_stacks(one_len, init_y, line_width, case):
+def draw_stacks(one_len, init_y, line_width):
 	global ONE_LEN, max_elem_width
 	i = 0
 	ONE_LEN = one_len
 	max_elem_width = MAX_ELEM * ONE_LEN
-	if case == 0 or case == 2:
-		for num in stack1:
-			el_x = calc_el_x(num) + INIT_X_A
-			cur_y = init_y + i * INIT_SPACING
-			linesA.append(draw_line(el_x, cur_y, el_x + one_len * num, cur_y, D_RED, line_width))
-			i += 1
+	for num in stack1:
+		# print(f'num: {num}, max_elem_width: {max_elem_width}')
+		el_x = calc_el_x(num) + INIT_X_A
+		cur_y = init_y + i * INIT_SPACING
+		linesA.append(draw_line(el_x, cur_y, el_x + one_len * num, cur_y, D_RED, line_width))
+		i += 1
 	# i = 0
 	# if case == 1 or case == 2:
 	# 	for num in stack2:
@@ -383,9 +383,6 @@ def do_animation(ess, tf):
 			color_line(linesB[0], linesB[1], color=D_BLUE)
 	return text, text1
 
-def make_gradient(ele):
-	pass
-
 def move_elem_pyramid(line, max_el_width, col_value):
 	color = gr.color_rgb(col_value, col_value, col_value)
 	# line_width = line.p2.x - line.p1.x
@@ -399,17 +396,20 @@ def move_elem_pyramid(line, max_el_width, col_value):
 
 def make_gradient_pyramid(max_el_width):
 	i = 0
-	grad_step = int(240/len(linesA))
+	len1 = len(linesA)
+	grad_step = int(255/len1)
+	left = 240 - grad_step * len1
+	val = 0
 	for line in linesA:
-		col_value = 255 - i * grad_step
+		val += grad_step if i > left else (grad_step + 1)
+		col_value = 255 - val
 		move_elem_pyramid(line, max_el_width, col_value)
-		i += 1
 	# [move_elem_pyramid(line, max_el_width) for line in linesA]
 
 def animate(ess, oplen):
-	# tf = 1/(ess['init_st_len'] * DELAY)
+	# tf = 1/(ess['in_len'] * DELAY)
 	tf = 1/(oplen / DELAY)
-	draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'], 2)
+	draw_stacks(ess['one_len'], ess['init_y'], ess['line_width'])
 	text = gr.Text(gr.Point(win.getWidth()/2 - 30, SCR_HEIGHT - Y_INDENT), 'Click on the screen to start')
 	text.setTextColor(YELLOW)
 	text.setSize(15)
@@ -440,15 +440,7 @@ def extra_validate(ops):
 		error_and_quit(f'found duplicates in your initial array')
 
 def process_for_pos_num(st_stack, in_len):
-	print(f'stack1: {stack1}')
-	# bn_scale(st_stack, in_len)
-	init_st_len = len(stack1)
-	# print_stacks(stack1, stack2)
-	max_elem = max(stack1)
-	min_elem = min(stack1)
-	one_len = calc_one_len(max_elem, min_elem)
-	init_y, line_width = calc_init_y(init_st_len)
-	ess_vars = {'one_len' : one_len, 'init_y' : init_y, 'line_width' : line_width, 'init_st_len' : init_st_len, 'max_elem' : max_elem, 'min_elem' : min_elem}
+	global MAX_ELEM
 	if not select.select([sys.stdin,],[],[],0.0)[0]:
 		error_and_quit('no operations in standard input')
 	for line in sys.stdin:
@@ -457,6 +449,17 @@ def process_for_pos_num(st_stack, in_len):
 	if not ops:
 		error_and_quit('no operations, some error occured')
 	op_len = len(ops)
+	print(f'stack1: {stack1}')
+	bn_scale(st_stack, in_len)
+	print(f'stack1_rev: {stack1}')
+	# print_stacks(stack1, stack2)
+	max_elem = max(stack1)
+	MAX_ELEM = max_elem
+	min_elem = min(stack1)
+	one_len = calc_one_len(max_elem, min_elem)
+	init_y, line_width = calc_init_y(in_len)
+	ess_vars = {'one_len' : one_len, 'init_y' : init_y, 'line_width' : line_width, 'in_len' : in_len, 'max_elem' : max_elem, 'min_elem' : min_elem}
+	print(f'ess_vars: {ess_vars}')
 	extra_validate(ops)
 	animate(ess_vars, op_len)
 	return op_len
@@ -506,27 +509,37 @@ def globalize(sorted_stack):
 # 		num = av_val + i
 # 		i += 2
 
-# def bn_scale(st_stack, in_len):
-# 	global stack1
-# 	min_val = st_stack[0]
-# 	av_val = sum(st_stack)/in_len
-# 	# print(f'av_val: {av_val}')
-# 	fl_arr = []
-# 	# if av_val > min_val * in_len:
-# 	# 	fl_arr = [convert(num, av_val) for num in stack1]
-# 	# 	print(f'fl_arr: {fl_arr}')
-# 	# 	mval = min(fl_arr)
-# 	# 	print(f'mval: {mval}')
-# 	# 	mult = float(1.01)/mval
-# 	# 	print(f'mult: {mult}')
-# 	# 	del stack1
-# 	# 	stack1 = convert_to_i(fl_arr, mult)
-# 	add_stack = [filterLessAvVal(num, av_val) for num in stack1]
-# 	ltav_stack = filter(filterNoneVals, add_stack)
-# 	add_stack = [filterMoreAvVal(num, av_val) for num in stack1]
-# 	mtav_stack = filter(filterNoneVals, add_stack)
-# 	mtav_stack = convert(mtav_stack, ltav_stack[-1], av_val)
-# 	# print(f'stack1: {stack1}')
+def bn_scale(st_stack, in_len):
+	global stack1
+	av_val = sum(st_stack)/in_len
+	# print(f'av_val: {av_val}')
+	# print(f'st_stack: {st_stack}')
+	while av_val > st_stack[0] * in_len and st_stack[0] * 50 < st_stack[-1]:
+		for i in range(in_len - 1):
+			if st_stack[i + 1] > st_stack[i] * 2:
+				ind_st1 = stack1.index(st_stack[i + 1])
+				if st_stack[i] == 1 and st_stack[i + 1] > 10:
+					st_stack[i + 1] = int(st_stack[i + 1]/2)
+				elif st_stack[i] != 1:
+					st_stack[i + 1] = st_stack[i] + int(st_stack[i + 1]/st_stack[i])
+				stack1[ind_st1] = st_stack[i + 1]
+		av_val = sum(st_stack)/in_len
+		# print(f'st_stack: {st_stack}')
+		# print(f'revised_stack1: {stack1}')
+	# 	fl_arr = [convert(num, av_val) for num in stack1]
+	# 	print(f'fl_arr: {fl_arr}')
+	# 	mval = min(fl_arr)
+	# 	print(f'mval: {mval}')
+	# 	mult = float(1.01)/mval
+	# 	print(f'mult: {mult}')
+	# 	del stack1
+	# 	stack1 = convert_to_i(fl_arr, mult)
+	# add_stack = [filterLessAvVal(num, av_val) for num in stack1]
+	# ltav_stack = filter(filterNoneVals, add_stack)
+	# add_stack = [filterMoreAvVal(num, av_val) for num in stack1]
+	# mtav_stack = filter(filterNoneVals, add_stack)
+	# mtav_stack = convert(mtav_stack, ltav_stack[-1], av_val)
+	# print(f'revised_stack!: {stack1}')
 
 def make_label(x, y, text, color, size, style='italic'):
 	label = gr.Text(gr.Point(x, y), text)
@@ -536,14 +549,15 @@ def make_label(x, y, text, color, size, style='italic'):
 	return label
 
 def main():
-	global stack1, stack2, MAX_ELEM, in_len
+	global stack1, stack2, in_len
 	op_len = 0
 	stack = parse_params()
 	# print_stacks(stack, stack2)
 	stack1 = list(map(cast_to_int, stack))
 	in_len = len(stack1)
 	st_stack = sorted(stack1)
-	MAX_ELEM = st_stack[-1]
+	if stack1 == st_stack:
+		error_and_quit(f'Array {stack1} is sorted!')
 	if any(num <= 0 for num in stack1):
 		globalize(st_stack)
 		st_stack = sorted(stack1)

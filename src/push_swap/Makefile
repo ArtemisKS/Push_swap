@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+         #
+#    By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/23 20:51:01 by akupriia          #+#    #+#              #
-#    Updated: 2018/09/23 21:34:31 by akupriia         ###   ########.fr        #
+#    Updated: 2019/04/03 22:05:05 by vbrazas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ SRC_D	:=	./
 OBJ_D	:=	.obj/
 
 CC		:=	clang
-CFLAGS	:=	-Wall -Wextra -Werror
+CFLAGS	:=	-Wall -Wextra -Werror -g
 IFLAGS	:=	-I $(INC_D)
 LFLAGS	:=	-L $(LIB) -lftprintf
 

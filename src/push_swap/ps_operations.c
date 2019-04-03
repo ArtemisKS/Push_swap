@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ps_operations.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:06:00 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/03 22:08:43 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ra(t_stack *stack)
 			i++;
 		}
 		stack->st1[i] = elem;
-		ft_printf("ra\n");
+		ft_lstpush(&op_list, ft_lstnew("ra\n", 3));
 	}
 }
 
@@ -63,7 +63,7 @@ void	rb(t_stack *stack)
 			i++;
 		}
 		stack->st2[i] = elem;
-		ft_printf("rb\n");
+		ft_lstpush(&op_list, ft_lstnew("rb\n", 3));
 	}
 }
 
@@ -82,7 +82,8 @@ void	rra(t_stack *stack)
 			i--;
 		}
 		stack->st1[i] = elem;
-		ft_printf("rra\n");
+		ft_lstpush(&op_list, ft_lstnew("rra\n", 4));
+		// ft_printf("rra\n");
 	}
 }
 
@@ -101,6 +102,7 @@ void	rrb(t_stack *stack)
 			i--;
 		}
 		stack->st2[i] = elem;
-		ft_printf("rrb\n");
+		ft_lstpush(&op_list, ft_lstnew("rrb\n", 4));
+		// ft_printf("rrb\n");
 	}
 }

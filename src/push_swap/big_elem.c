@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   big_elem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
+/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/02 21:00:16 by akupriia          #+#    #+#             */
-/*   Updated: 2018/09/23 20:50:02 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/02 20:20:00 by vbrazas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,11 @@ t_stack	*check_if_str(char *s, t_stack *stack)
 	while (arr[++i])
 		;
 	free_stack(stack);
-	stack = init_stack(i);
+	stack = ft_memalloc(sizeof(t_stack));
+	stack->st1 = malloc(sizeof(int) * (i - 1));
+	stack->st2 = malloc(sizeof(int) * (i - 1));
+	if (i > 1)
+		stack->num_elem = ft_memalloc(sizeof(int) * (i - 1) / 2);
 	i = -1;
 	while (arr[++i])
 	{
