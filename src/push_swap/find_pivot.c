@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_pivot.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:05:07 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 22:07:48 by vbrazas          ###   ########.fr       */
+/*   Updated: 2019/04/03 23:24:29 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	pa(t_stack *stack)
 		stack->st1 = shift_back(stack->st1, &stack->num_1);
 		stack->st1[0] = num;
 		free(arr);
-		ft_lstpush(&op_list, ft_lstnew("pa\n", 3));
+		ft_lstpush(&op_list, ft_lstnew(ft_strdup("pa\n"), 3));
 		// ft_printf("pa\n");
 	}
 }
@@ -58,7 +58,7 @@ void	pb(t_stack *stack)
 		stack->st2 = shift_back(stack->st2, &stack->num_2);
 		stack->st2[0] = num;
 		free(arr);
-		ft_lstpush(&op_list, ft_lstnew("pb\n", 3));
+		ft_lstpush(&op_list, ft_lstnew(ft_strdup("pb\n"), 3));
 		// ft_printf("pb\n");
 	}
 }

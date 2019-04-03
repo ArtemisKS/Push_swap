@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/13 17:54:44 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 20:48:22 by vbrazas          ###   ########.fr       */
+/*   Updated: 2019/04/03 23:25:58 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	change_op_list(char c, int ind)
 
 	((char *)op_list->content)[ind] = c;
 	tmp_list = (op_list->next)->next;
+	free(op_list->next->content);
 	free(op_list->next);
 	op_list->next = tmp_list;
 	op_list = op_list->next;
@@ -95,14 +96,14 @@ void	print_change_ops()
 {
 	int			i;
 	// t_list		*tmp_list;
-	const char	*ops[] = {"sa", "sb", "ra", "rb", "rra", "rrb"};
+	// const char	*ops[] = {"sa", "sb", "ra", "rb", "rra", "rrb"};
 
 	// tmp_list = op_list;
 	while (op_list && !(i = 0))
 	{
-		while ((i += 2) && i < 6)
-			if (recur_ops((char *)ops[i], (char *)ops[i + 1]))
-				change_op_list(ops[i][0], ft_strlen(ops[i]) - 1);
+		// while ((i += 2) && i < 6)
+		// 	if (recur_ops((char *)ops[i], (char *)ops[i + 1]))
+		// 		change_op_list(ops[i][0], ft_strlen(ops[i]) - 1);
 		ft_printf("%s", op_list->content);
 		op_list = op_list->next;
 	}

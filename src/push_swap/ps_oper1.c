@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ps_oper1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:06:56 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/02 22:15:26 by vbrazas          ###   ########.fr       */
+/*   Updated: 2019/04/03 23:25:34 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	sa(t_stack *stack)
 	if (stack->num_1 > 1)
 	{
 		swap(&stack->st1[0], &stack->st1[1]);
-		ft_lstpush(&op_list, ft_lstnew("sa\n", 3));
+		ft_lstpush(&op_list, ft_lstnew(ft_strdup("sa\n"), 3));
 	}
 }
 
@@ -47,7 +47,7 @@ void	sb(t_stack *stack)
 	if (stack->num_2 > 1)
 	{
 		swap(&stack->st2[0], &stack->st2[1]);
-		ft_lstpush(&op_list, ft_lstnew("sb\n", 3));
+		ft_lstpush(&op_list, ft_lstnew(ft_strdup("sb\n"), 3));
 	}
 }
 
