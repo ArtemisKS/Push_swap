@@ -6,7 +6,7 @@
 /*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:06:56 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 23:25:34 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/04 22:38:24 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,25 @@ int		top_b(t_stack *stack)
 
 void	sa(t_stack *stack)
 {
+	char *s;
 	if (stack->num_1 > 1)
 	{
 		swap(&stack->st1[0], &stack->st1[1]);
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("sa\n"), 3));
+		s = ft_strdup("sa\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 
 void	sb(t_stack *stack)
 {
+	char *s;
 	if (stack->num_2 > 1)
 	{
 		swap(&stack->st2[0], &stack->st2[1]);
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("sb\n"), 3));
+		s = ft_strdup("sb\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   big_elem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/02 21:00:16 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/02 20:20:00 by vbrazas          ###   ########.fr       */
+/*   Updated: 2019/04/04 22:48:42 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,17 @@ void	free_stack(t_stack *stack)
 	free(stack->st1);
 	free(stack->st2);
 	free(stack);
+}
+
+void			ft_error(int code)
+{
+	if (code == 1)
+		ft_printf("{RED}Duplicate number in ./push_swap{RESET}\n");
+	else if (code == 2)
+		ft_printf("{RED}No arguments, in ./push_swap, man!{RESET}\n");
+	else if (code == 3)
+		ft_printf("{RED}Wrong number in ./push_swap{RESET}\n");
+	exit(1);
 }
 
 t_stack	*check_if_str(char *s, t_stack *stack)

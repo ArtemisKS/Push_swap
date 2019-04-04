@@ -6,7 +6,7 @@
 /*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:06:00 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 23:30:13 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/04 23:13:48 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,93 +14,87 @@
 
 int		*shift_back(int *arr, int *n)
 {
-	int *tmp;
+	// int *tmp;
 	int i;
 
-	i = 1;
-	(*n)++;
-	tmp = (int*)malloc(sizeof(int) * (*n));
-	tmp[0] = 0;
-	while (i < *n)
-	{
-		tmp[i] = arr[i - 1];
-		i++;
-	}
-	return (tmp);
+	i = (*n)++;
+	while (--i > -1)
+		arr[i + 1] = arr[i];
+	return (arr);
 }
 
 void	ra(t_stack *stack)
 {
-	int elem;
-	int i;
+	int		elem;
+	int		i;
+	char	*s;
 
 	if (stack->num_1 > 1)
 	{
-		i = 0;
+		i = -1;
 		elem = stack->st1[0];
-		while (i < stack->num_1 - 1)
-		{
+		while (++i < stack->num_1 - 1)
 			stack->st1[i] = stack->st1[i + 1];
-			i++;
-		}
 		stack->st1[i] = elem;
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("ra\n"), 3));
+		s = ft_strdup("ra\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 
 void	rb(t_stack *stack)
 {
-	int elem;
-	int i;
+	int		elem;
+	int		i;
+	char	*s;
 
 	if (stack->num_2 > 1)
 	{
-		i = 0;
+		i = -1;
 		elem = stack->st2[0];
-		while (i < stack->num_2 - 1)
-		{
+		while (++i < stack->num_2 - 1)
 			stack->st2[i] = stack->st2[i + 1];
-			i++;
-		}
 		stack->st2[i] = elem;
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("rb\n"), 3));
+		s = ft_strdup("rb\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 
 void	rra(t_stack *stack)
 {
-	int elem;
-	int i;
+	int		elem;
+	int		i;
+	char	*s;
 
 	if (stack->num_1 > 1)
 	{
-		i = stack->num_1 - 1;
+		i = stack->num_1;
 		elem = stack->st1[stack->num_1 - 1];
-		while (i > 0)
-		{
+		while (--i > 0)
 			stack->st1[i] = stack->st1[i - 1];
-			i--;
-		}
 		stack->st1[i] = elem;
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("rra\n"), 4));
+		s = ft_strdup("rra\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 4));
+		free(s);
 	}
 }
 
 void	rrb(t_stack *stack)
 {
-	int elem;
-	int i;
+	int		elem;
+	int		i;
+	char	*s;
 
 	if (stack->num_2 > 1)
 	{
-		i = stack->num_2 - 1;
+		i = stack->num_2;
 		elem = stack->st2[stack->num_2 - 1];
-		while (i > 0)
-		{
+		while (--i > 0)
 			stack->st2[i] = stack->st2[i - 1];
-			i--;
-		}
 		stack->st2[i] = elem;
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("rrb\n"), 4));
+		s = ft_strdup("rrb\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 4));
+		free(s);
 	}
 }

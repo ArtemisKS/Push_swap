@@ -6,7 +6,7 @@
 /*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/27 23:05:07 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 23:24:29 by akupriia         ###   ########.fr       */
+/*   Updated: 2019/04/04 23:17:57 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,50 +16,44 @@ int		*shift_fw(int *arr, int *n)
 {
 	int i;
 
-	i = 0;
-	(*n)--;
-	while (i < *n)
-	{
+	(i = -1) && (--(*n));
+	while (++i < *n)
 		arr[i] = arr[i + 1];
-		i++;
-	}
 	arr[i] = 0;
 	return (arr);
 }
 
 void	pa(t_stack *stack)
 {
-	int num;
-	int *arr;
+	int		num;
+	char	*s;
 
 	if (stack->num_2 > 0)
 	{
 		num = stack->st2[0];
 		stack->st2 = shift_fw(stack->st2, &stack->num_2);
-		arr = stack->st1;
 		stack->st1 = shift_back(stack->st1, &stack->num_1);
 		stack->st1[0] = num;
-		free(arr);
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("pa\n"), 3));
-		// ft_printf("pa\n");
+		s = ft_strdup("pa\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 
 void	pb(t_stack *stack)
 {
-	int num;
-	int *arr;
+	int		num;
+	char	*s;
 
 	if (stack->num_1 > 0)
 	{
 		num = stack->st1[0];
 		stack->st1 = shift_fw(stack->st1, &stack->num_1);
-		arr = stack->st2;
 		stack->st2 = shift_back(stack->st2, &stack->num_2);
 		stack->st2[0] = num;
-		free(arr);
-		ft_lstpush(&op_list, ft_lstnew(ft_strdup("pb\n"), 3));
-		// ft_printf("pb\n");
+		s = ft_strdup("pb\n");
+		ft_lstpush(&op_list, ft_lstnew(s, 3));
+		free(s);
 	}
 }
 

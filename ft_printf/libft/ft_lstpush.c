@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstpush.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbrazas <vbrazas@student.unit.ua>          +#+  +:+       +#+        */
+/*   By: akupriia <akupriia@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/12 20:39:35 by akupriia          #+#    #+#             */
-/*   Updated: 2019/04/03 20:46:35 by vbrazas          ###   ########.fr       */
+/*   Updated: 2019/04/04 23:17:25 by akupriia         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,8 @@ void	ft_lstpush(t_list **alst, t_list *new)
 		lst->next = new;
 	}
 	else
+	{
+		free(*alst);
 		*alst = new;
+	}
 }
