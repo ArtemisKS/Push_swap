@@ -22,6 +22,8 @@ To get this thing up and running
 
 ## Video
 
-https://user-images.githubusercontent.com/35403190/156826083-de44cde9-9ce4-41d8-a5f6-70c73f951204.mov
+
+https://user-images.githubusercontent.com/35403190/156831876-90d81f4d-c629-493d-bf3b-da32f4bb94cd.mov
+
 
 ---
